@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core
+                          http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                          http://www.mulesoft.org/schema/mule/http
+                          http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+                          http://www.mulesoft.org/schema/mule/ee/core
+                          http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+    <!-- Configuração do Ouvinte HTTP -->
+    <http:listener-config name="HTTP_Listener_config_5" doc:name="HTTP Listener config 5">
+        <http:listener-connection host="0.0.0.0" port="8085" />
+    </http:listener-config>
+
+    <!-- Fluxo para Empréstimos Pessoais e Empresariais -->
+    <flow name="personal-business-loans-flow" doc:name="Personal and Business Loans Flow">
+        <http:listener doc:name="Listener" config-ref="HTTP_Listener_config_5" path="/loans" />
+        <ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+                output application/json
+                ---
+                {
+                    "message": "Detalhes do empréstimo recebidos",
+                    "loanDetails": payload
+                }]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <logger level="INFO" doc:name="Logger" message="#[payload]" />
+    </flow>
+
+    <!-- Fluxo para Simulador de Crédito -->
+    <flow name="credit-simulator-flow" doc:name="Credit Simulator Flow">
+        <http:listener doc:name="Listener" config-ref="HTTP_Listener_config_5" path="/credit-simulator" />
+        <ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+                output application/json
+                ---
+                {
+                    "message": "Simulação de crédito realizada",
+                    "simulationResults": payload
+                }]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <logger level="INFO" doc:name="Logger" message="#[payload]" />
+    </flow>
+
+    <!-- Fluxo para Financiamentos -->
+    <flow name="financing-flow" doc:name="Financing Flow">
+        <http:listener doc:name="Listener" config-ref="HTTP_Listener_config_5" path="/financing" />
+        <ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+                output application/json
+                ---
+                {
+                    "message": "Detalhes do financiamento recebidos",
+                    "financingDetails": payload
+                }]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <logger level="INFO" doc:name="Logger" message="#[payload]" />
+    </flow>
+</mule>

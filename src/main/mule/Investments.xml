@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core
+                          http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                          http://www.mulesoft.org/schema/mule/http
+                          http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+                          http://www.mulesoft.org/schema/mule/ee/core
+                          http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+    <http:listener-config name="HTTP_Listener_config_4" doc:name="HTTP Listener config 4">
+        <http:listener-connection host="0.0.0.0" port="8084" />
+    </http:listener-config>
+
+
+    <flow name="manage-investment-products-flow" doc:name="Manage Investment Products Flow">
+        <http:listener doc:name="Listener" config-ref="HTTP_Listener_config_4" path="/investment-products" />
+        <ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+                output application/json
+                ---
+                {
+                    "message": "Produtos de investimento gerenciados",
+                    "products": payload
+                }]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <logger level="INFO" doc:name="Logger" message="#[payload]" />
+    </flow>
+
+
+    <flow name="manage-private-pension-flow" doc:name="Manage Private Pension Flow">
+        <http:listener doc:name="Listener" config-ref="HTTP_Listener_config_4" path="/private-pension" />
+        <ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+                output application/json
+                ---
+                {
+                    "message": "Planos de previdência privada gerenciados",
+                    "plans": payload
+                }]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <logger level="INFO" doc:name="Logger" message="#[payload]" />
+    </flow>
+</mule>

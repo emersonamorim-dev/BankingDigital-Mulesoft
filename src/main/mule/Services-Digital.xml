@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core
+                          http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                          http://www.mulesoft.org/schema/mule/http
+                          http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+                          http://www.mulesoft.org/schema/mule/ee/core
+                          http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+    <http:listener-config name="HTTP_Listener_config_6" doc:name="HTTP Listener config 6">
+        <http:listener-connection host="0.0.0.0" port="8086" />
+    </http:listener-config>
+
+    <!-- Fluxo para Câmbio -->
+    <flow name="exchange-flow" doc:name="Exchange Flow">
+        <http:listener doc:name="Listener" config-ref="HTTP_Listener_config_6" path="/exchange" />
+        <ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+                output application/json
+                ---
+                {
+                    "message": "Operação de câmbio realizada",
+                    "exchangeDetails": payload
+                }]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <logger level="INFO" doc:name="Logger" message="#[payload]" />
+    </flow>
+
+    <!-- Fluxo para Seguros -->
+    <flow name="insurance-flow" doc:name="Insurance Flow">
+        <http:listener doc:name="Listener" config-ref="HTTP_Listener_config_6" path="/insurance" />
+        <ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+                output application/json
+                ---
+                {
+                    "message": "Gestão de seguro realizada",
+                    "insuranceDetails": payload
+                }]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <logger level="INFO" doc:name="Logger" message="#[payload]" />
+    </flow>
+
+    <!-- Fluxo para Gestão Financeira -->
+    <flow name="financial-management-flow" doc:name="Financial Management Flow">
+        <http:listener doc:name="Listener" config-ref="HTTP_Listener_config_6" path="/financial-management" />
+        <ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+                output application/json
+                ---
+                {
+                    "message": "Gestão financeira atualizada",
+                    "financialManagementDetails": payload
+                }]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <logger level="INFO" doc:name="Logger" message="#[payload]" />
+    </flow>
+
+    <!-- Fluxo para Atendimento ao Cliente -->
+    <flow name="customer-service-flow" doc:name="Customer Service Flow">
+        <http:listener doc:name="Listener" config-ref="HTTP_Listener_config_6" path="/customer-service" />
+        <ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+                output application/json
+                ---
+                {
+                    "message": "Solicitação de atendimento ao cliente recebida",
+                    "customerServiceDetails": payload
+                }]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <logger level="INFO" doc:name="Logger" message="#[payload]" />
+    </flow>
+</mule>

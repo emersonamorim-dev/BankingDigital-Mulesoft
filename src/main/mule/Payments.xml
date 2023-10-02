@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core
+                          http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                          http://www.mulesoft.org/schema/mule/http
+                          http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+                          http://www.mulesoft.org/schema/mule/ee/core
+                          http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+    <!-- Configuração do ouvinte HTTP -->
+    <http:listener-config name="HTTP_Listener_config_3" doc:name="HTTP Listener config 2">
+        <http:listener-connection host="0.0.0.0" port="8083" />
+    </http:listener-config>
+
+    <!-- Fluxo para Boleto -->
+    <flow name="boleto-flow" doc:name="Boleto Flow">
+        <http:listener doc:name="Boleto Listener" config-ref="HTTP_Listener_config_3" path="/boleto" />
+        <set-variable variableName="boletoDetails" value="#[payload]" doc:name="Set Boleto Details"/>
+        <http:request method="POST" url="http://internal-service/boleto" doc:name="Generate Boleto">
+            <http:body ><![CDATA[#[vars.boletoDetails]]]></http:body>
+        </http:request>
+        <logger level="INFO" doc:name="Boleto Logger" message="#[payload]"/>
+    </flow>
+
+    <!-- Fluxo para Cartão de Crédito -->
+    <flow name="credit-card-flow" doc:name="Credit Card Flow">
+        <http:listener doc:name="Credit Card Listener" config-ref="HTTP_Listener_config_3" path="/credit-card" />
+        <set-variable variableName="creditCardDetails" value="#[payload]" doc:name="Set Credit Card Details"/>
+        <http:request method="POST" url="http://internal-service/credit-card" doc:name="Process Credit Card Transaction">
+            <http:body ><![CDATA[#[vars.creditCardDetails]]]></http:body>
+        </http:request>
+        <logger level="INFO" doc:name="Credit Card Logger" message="#[payload]"/>
+    </flow>
+
+    <!-- Fluxo para Cartão de Débito -->
+    <flow name="debit-card-flow" doc:name="Debit Card Flow">
+        <http:listener doc:name="Debit Card Listener" config-ref="HTTP_Listener_config_3" path="/debit-card" />
+        <set-variable variableName="debitCardDetails" value="#[payload]" doc:name="Set Debit Card Details"/>
+        <http:request method="POST" url="http://internal-service/debit-card" doc:name="Process Debit Card Transaction">
+            <http:body ><![CDATA[#[vars.debitCardDetails]]]></http:body>
+        </http:request>
+        <logger level="INFO" doc:name="Debit Card Logger" message="#[payload]"/>
+    </flow>
+
+    <!-- Fluxo para Pagamento via PIX -->
+    <flow name="pix-payment-flow" doc:name="PIX Payment Flow">
+        <http:listener doc:name="PIX Listener" config-ref="HTTP_Listener_config_3" path="/pix" />
+        <set-variable variableName="pixDetails" value="#[payload]" doc:name="Set PIX Details"/>
+        <http:request method="POST" url="http://internal-service/pix" doc:name="Process PIX Payment">
+            <http:body ><![CDATA[#[vars.pixDetails]]]></http:body>
+        </http:request>
+        <logger level="INFO" doc:name="PIX Logger" message="#[payload]"/>
+    </flow>
+</mule>
