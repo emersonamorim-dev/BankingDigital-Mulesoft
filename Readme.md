@@ -1,5 +1,5 @@
 ## Banco DigitaL - API MuleSoft
-Codificação de aplicação MuleSoft fornece uma série de endpoints para facilitar as operações Bancárias Digitais, incluindo autenticação biométrica, interações com aplicativos móveis e integrações com IA e chatbots.
+Codificação de aplicação MuleSoft que fornece uma série de endpoints para facilitar as operações Bancárias Digitais, incluindo autenticação biométrica, interações com aplicativos móveis e integrações com IA e chatbots.
 
 
 ## Pré-requisitos
